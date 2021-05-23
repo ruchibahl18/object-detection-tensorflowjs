@@ -1,0 +1,49 @@
+<!-- Load TensorFlow.js. This is required to use coco-ssd model. -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
+<!-- Load the coco-ssd model. -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"> </script>
+
+<img id="img" crossorigin alt="image" style='display:none' width="600px" height="600px" src="https://image.shutterstock.com/image-photo/london-october-2018-busy-street-600w-1229626711.jpg"/>
+
+<!-- Replace this with your image. Make sure CORS settings allow reading the image! -->
+<canvas id="myCanvas">
+
+</canvas>
+<!-- Place your code in the script tag below. You can also use an external .js file -->
+<script>
+  // Notice there is no 'import' statement. 'cocoSsd' and 'tf' is
+  // available on the index-page because of the script tag above.
+
+	window.onload = function() {
+	  var c = document.getElementById("myCanvas");
+	  var ctx = c.getContext("2d");
+	  var img = document.getElementById("img");
+	  ctx.canvas.width = window.innerWidth;
+	  ctx.canvas.height = window.innerHeight;
+	  ctx.drawImage(img, 0, 0,600,600);
+	};
+  const img = document.getElementById('img');
+  var c = document.getElementById("myCanvas");
+  var ctx = c.getContext("2d");
+  
+
+
+  // Load the model.
+  cocoSsd.load().then(model => {
+    // detect objects in the image.
+    model.detect(img).then(predictions => {
+      console.log('Predictions: ', predictions);
+	  predictions.forEach(function(p) {
+		ctx.beginPath();
+		ctx.font = "bold 30px Arial";
+		ctx.strokeStyle = "#000";
+		ctx.rect(p.bbox[0], p.bbox[1],p.bbox[2],p.bbox[3]);
+		ctx.strokeStyle="#FFFF00";
+		ctx.stroke();
+		ctx.fillStyle = "#FFFF00";
+		ctx.fillText(p.class, (p.bbox[0]), p.bbox[1]);
+	  });
+	
+    });
+  });
+</script>
